@@ -1,5 +1,6 @@
 ﻿
 
+using System.Drawing;
 using System.Formats.Asn1;
 
 public enum ElevatorState
@@ -31,6 +32,41 @@ public class Elevator
 
     }
 
+    public void MoveElevatorToGoDown( int floor)
+    {
+        for (int i = CurrentFlor; i >= floor; i--)
+        {
+            Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{floor}. katına iniyor... şuan {i} katında.");
+            Thread.Sleep(1000);
+            CurrentFlor = i;
+        }
+        State = ElevatorState.Idle;
+        Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
+        Thread.Sleep(1000);
+        Console.WriteLine(" Kapı Açılıyor.....");
+        Console.WriteLine(" Yolcuların binmesini Bekliyor.....");
+
+        Thread.Sleep(1000);
+        Console.WriteLine(" Kapı Kapanıyor");
+    }
+    public void MoveElevatorToGoUp(int floor)
+    {
+        for (int i = CurrentFlor; i <= floor; i++)
+        {
+            Console.WriteLine($"Asansör {State.ToString()} Durumunda {floor}. katına çıkıyor... şuan {i} katında.");
+            Thread.Sleep(1000);
+            CurrentFlor = i;
+        }
+
+        State = ElevatorState.Idle;
+        Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
+        Thread.Sleep(1000);
+        Console.WriteLine(" Kapı Açılıyor.....");
+        Console.WriteLine(" Yolcuların binmesini Bekliyor.....");
+
+        Thread.Sleep(1000);
+        Console.WriteLine(" Kapı Kapanıyor");
+    }
     public void MoveToFloor()
     {
         var targetFloorList = floors.Where(x => x.State == PassangerState.Waiting).ToList();
@@ -50,20 +86,10 @@ public class Elevator
 
             if (State == ElevatorState.GoingDown)
             {
-                for (int i = CurrentFlor; i >= targetFloorList[0].Floor; i--)
-                {
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{targetFloorList[0].TargetFloor}. katına iniyor... şuan {i} katında.");
-                    Thread.Sleep(1000);
-                    CurrentFlor = i;
-                }
-                State = ElevatorState.Idle;
-                Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                Thread.Sleep(1000);
-                Console.WriteLine(" Kapı Açılıyor.....");
-                Console.WriteLine(" Yolcuların binmesini Bekliyor.....");
+               
 
-                Thread.Sleep(1000);
-                Console.WriteLine(" Kapı Kapanıyor");
+                MoveElevatorToGoDown(targetFloorList[0].Floor);
+
                 if (CurrentFlor > targetFloorList[0].TargetFloor)
                 {
                     State = ElevatorState.GoingDown;
@@ -75,45 +101,18 @@ public class Elevator
 
                 if (State == ElevatorState.GoingUp)
                 {
-
-                    for (int i = CurrentFlor; i <= targetFloorList[0].TargetFloor; i++)
-                    {
-                        Console.WriteLine($"Asansör {State.ToString()} Durumunda {targetFloorList[0].TargetFloor}. katına çıkıyor... şuan {i} katında.");
-                        Thread.Sleep(1000);
-                        CurrentFlor = i;
-                    }
-
-                    State = ElevatorState.Idle;
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Açılıyor.....");
-
-                    Console.WriteLine(" Yolcular çıkıyor .....");
+                    MoveElevatorToGoUp(targetFloorList[0].TargetFloor);
+                    
                     targetFloorList[0].State = PassangerState.OutOfElevator;
                     targetFloorList.RemoveAt(0);
 
                     Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Kapanıyor");
                 }
                 else if (State == ElevatorState.GoingDown)
                 {
-                    for (int i = CurrentFlor; i >= targetFloorList[0].TargetFloor; i--)
-                    {
-                        Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{targetFloorList[0].TargetFloor}. katına iniyor... şuan {i} katında.");
-                        Thread.Sleep(1000);
-                        CurrentFlor = i;
-
-                    }
-                    State = ElevatorState.Idle;
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Açılıyor.....");
-
-                    Console.WriteLine(" Yolcular çıkıyor .....");
-                    targetFloorList[0].State = PassangerState.OutOfElevator;
+                    MoveElevatorToGoDown(targetFloorList[0].TargetFloor);
+                   
                     targetFloorList.RemoveAt(0);
-                    Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Kapanıyor");
                 }
                 else
                 {
@@ -126,21 +125,8 @@ public class Elevator
             }
             else if (State == ElevatorState.GoingUp)
             {
-                for (int i = CurrentFlor; i <= targetFloorList[0].Floor; i++)
-                {
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda {targetFloorList[0].TargetFloor}. katına çıkıyor... şuan {i} katında.");
-                    Thread.Sleep(1000);
-                    CurrentFlor = i;
-                }
-
-                State = ElevatorState.Idle;
-                Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                Thread.Sleep(1000);
-                Console.WriteLine(" Kapı Açılıyor.....");
-                Console.WriteLine(" Yolcuların binmesini Bekliyor.....");
-
-                Thread.Sleep(1000);
-                Console.WriteLine(" Kapı Kapanıyor");
+                MoveElevatorToGoUp(targetFloorList[0].Floor);
+                
 
                 if (CurrentFlor > targetFloorList[0].TargetFloor)
                 {
@@ -154,20 +140,8 @@ public class Elevator
 
                 if (State == ElevatorState.GoingUp)
                 {
-
-                    for (int i = CurrentFlor; i <= targetFloorList[0].TargetFloor; i++)
-                    {
-                        Console.WriteLine($"Asansör {State.ToString()} Durumunda {targetFloorList[0].TargetFloor}. katına çıkıyor... şuan {i} katında.");
-                        Thread.Sleep(1000);
-                        CurrentFlor = i;
-                    }
-
-                    State = ElevatorState.Idle;
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Açılıyor.....");
-
-                    Console.WriteLine(" Yolcular çıkıyor .....");
+                    MoveElevatorToGoUp(targetFloorList[0].TargetFloor);
+                    
                     targetFloorList[0].State = PassangerState.OutOfElevator;
                     targetFloorList.RemoveAt(0);
 
@@ -176,31 +150,15 @@ public class Elevator
                 }
                 else if (State == ElevatorState.GoingDown)
                 {
-                    for (int i = CurrentFlor; i >= targetFloorList[0].TargetFloor; i--)
-                    {
-                        Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{targetFloorList[0].TargetFloor}. katına iniyor... şuan {i} katında.");
-                        Thread.Sleep(1000);
-                        CurrentFlor = i;
-
-                    }
-                    State = ElevatorState.Idle;
-                    Console.WriteLine($"Asansör {State.ToString()} Durumunda ,{CurrentFlor}. katta Duruyor...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Açılıyor.....");
-
-                    Console.WriteLine(" Yolcular çıkıyor .....");
-                    targetFloorList[0].State = PassangerState.OutOfElevator;
+                    MoveElevatorToGoDown(targetFloorList[0].TargetFloor);
                     targetFloorList.RemoveAt(0);
                     Thread.Sleep(1000);
-                    Console.WriteLine(" Kapı Kapanıyor");
                 }
                 else
                 {
                     State = ElevatorState.Idle;
                     Console.WriteLine($"Asansör {CurrentFlor} katında duruyor");
                 }
-
-                //targetFloorList= targetFloorList.Where(x => x.State == PassangerState.Waiting).ToList();
 
             }
 
